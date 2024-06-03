@@ -6,7 +6,9 @@
   function processQueue() {
     while (mpq.length) {
       var args = mpq.shift();
-      mpq.callMethod.apply(mpq, args);
+      if (typeof args[0] === 'function') {
+        args[0].apply(null, args.slice(1));
+      }
     }
   }
 
@@ -26,7 +28,7 @@
   mpq.init = function(pixelId, options) {
     mpq.pixelId = pixelId;
     mpq.debug = options && options.debug;
-    mpq.endpoint = 'https://custom-pixel-sdk.onrender.com/pixel';
+    mpq.endpoint = 'https://cdn.jsdelivr.net/gh/AzimKrishna/custom-pixel-sdk/test2.js';
     isInitialized = true;
 
     if (mpq.debug) {
@@ -35,11 +37,11 @@
 
     // Subscribe to Shopify analytics events
     analytics.subscribe('page_viewed', function(event) {
-      mpq.callMethod('track', 'PageView', { pageEventId: event.id, timeStamp: event.timestamp });
+      mpq.track('PageView', { pageEventId: event.id, timeStamp: event.timestamp });
     });
 
     analytics.subscribe('product_viewed', function(event) {
-      mpq.callMethod('track', 'ViewContent', {
+      mpq.track('ViewContent', {
         content_ids: [event.data?.productVariant?.id],
         content_name: event.data?.productVariant?.title,
         currency: event.data?.productVariant?.price.currencyCode,
@@ -48,11 +50,11 @@
     });
 
     analytics.subscribe('search_submitted', function(event) {
-      mpq.callMethod('track', 'Search', { search_string: event.searchResult.query });
+      mpq.track('Search', { search_string: event.searchResult.query });
     });
 
     analytics.subscribe('product_added_to_cart', function(event) {
-      mpq.callMethod('track', 'AddToCart', {
+      mpq.track('AddToCart', {
         content_ids: [event.data?.cartLine?.merchandise?.productVariant?.id],
         content_name: event.data?.cartLine?.merchandise?.productVariant?.title,
         currency: event.data?.cartLine?.merchandise?.productVariant?.price.currencyCode,
@@ -61,15 +63,15 @@
     });
 
     analytics.subscribe('payment_info_submitted', function(event) {
-      mpq.callMethod('track', 'AddPaymentInfo', {});
+      mpq.track('AddPaymentInfo', {});
     });
 
     analytics.subscribe('checkout_started', function(event) {
-      mpq.callMethod('track', 'InitiateCheckout', {});
+      mpq.track('InitiateCheckout', {});
     });
 
     analytics.subscribe('checkout_completed', function(event) {
-      mpq.callMethod('track', 'Purchase', {
+      mpq.track('Purchase', {
         currency: event.data?.checkout?.currencyCode,
         value: event.data?.checkout?.totalPrice?.amount,
       });
