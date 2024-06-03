@@ -1,5 +1,6 @@
 (function(window, document) {
   var mpq = window.mpq = window.mpq || [];
+  var isInitialized = false;
 
   // Internal method to handle queued method calls
   function processQueue() {
@@ -12,10 +13,12 @@
   // Method to call the tracking functions
   mpq.callMethod = function() {
     var args = arguments;
-    if (typeof mpq.initialized === 'undefined' || !mpq.initialized) {
+    if (!isInitialized) {
       mpq.push(args);
     } else {
-      mpq.track(args[0], args[1]);
+      if (args[0] === 'track') {
+        mpq.track(args[1], args[2]);
+      }
     }
   };
 
@@ -23,9 +26,8 @@
   mpq.init = function(pixelId, options) {
     mpq.pixelId = pixelId;
     mpq.debug = options && options.debug;
-    mpq.queue = [];
-    mpq.endpoint = "https://custom-pixel-sdk.onrender.com/pixel";
-    mpq.initialized = true;
+    mpq.endpoint = 'https://custom-pixel-sdk.onrender.com/pixel';
+    isInitialized = true;
 
     if (mpq.debug) {
       console.log('Custom pixel initialized with ID:', pixelId);
@@ -33,11 +35,11 @@
 
     // Subscribe to Shopify analytics events
     analytics.subscribe('page_viewed', function(event) {
-      mpq.track('PageView', { pageEventId: event.id, timeStamp: event.timestamp });
+      mpq.callMethod('track', 'PageView', { pageEventId: event.id, timeStamp: event.timestamp });
     });
 
     analytics.subscribe('product_viewed', function(event) {
-      mpq.track('ViewContent', {
+      mpq.callMethod('track', 'ViewContent', {
         content_ids: [event.data?.productVariant?.id],
         content_name: event.data?.productVariant?.title,
         currency: event.data?.productVariant?.price.currencyCode,
@@ -46,28 +48,28 @@
     });
 
     analytics.subscribe('search_submitted', function(event) {
-      mpq.track('Search', { search_string: event.searchResult.query });
+      mpq.callMethod('track', 'Search', { search_string: event.searchResult.query });
     });
 
     analytics.subscribe('product_added_to_cart', function(event) {
-      mpq.track('AddToCart', {
+      mpq.callMethod('track', 'AddToCart', {
         content_ids: [event.data?.cartLine?.merchandise?.productVariant?.id],
         content_name: event.data?.cartLine?.merchandise?.productVariant?.title,
-        currency: event.data?.cartLine?.merchandise?.productVariant?.price?.currencyCode,
+        currency: event.data?.cartLine?.merchandise?.productVariant?.price.currencyCode,
         value: event.data?.cartLine?.merchandise?.productVariant?.price.amount,
       });
     });
 
     analytics.subscribe('payment_info_submitted', function(event) {
-      mpq.track('AddPaymentInfo', {});
+      mpq.callMethod('track', 'AddPaymentInfo', {});
     });
 
     analytics.subscribe('checkout_started', function(event) {
-      mpq.track('InitiateCheckout', {});
+      mpq.callMethod('track', 'InitiateCheckout', {});
     });
 
     analytics.subscribe('checkout_completed', function(event) {
-      mpq.track('Purchase', {
+      mpq.callMethod('track', 'Purchase', {
         currency: event.data?.checkout?.currencyCode,
         value: event.data?.checkout?.totalPrice?.amount,
       });
