@@ -28,7 +28,7 @@
   mpq.init = function(pixelId, options) {
     mpq.pixelId = pixelId;
     mpq.debug = options && options.debug;
-    mpq.endpoint = 'https://cdn.jsdelivr.net/gh/AzimKrishna/custom-pixel-sdk/test2.js';
+    mpq.endpoint = 'https://custom-pixel-sdk.onrender.com/pixel';
     isInitialized = true;
 
     if (mpq.debug) {
