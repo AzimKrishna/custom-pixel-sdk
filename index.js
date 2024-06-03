@@ -15,7 +15,7 @@ app.post('/pixel', (req, res) => {
 
 app.get('/', (req, res) => {
     res.send('Hello World! backend working');
-});w
+});
 
 app.listen(3000, () => {
   console.log('Pixel server listening on port 3000');
