@@ -59,7 +59,7 @@
     mpq.sendData = function(payload) {
       try {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://customer-behaviour.onrender.com/pixel', true);
+        xhr.open('POST', 'https://custom-pixel-sdk.onrender.com/pixel', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(payload));
       } catch (error) {
@@ -71,7 +71,7 @@
     mpq.sendBatch = function(batch) {
       try {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://customer-behaviour.onrender.com/pixel/batch', true);
+        xhr.open('POST', 'https://custom-pixel-sdk.onrender.com/pixel', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(batch));
         if (mpq.debug) {
