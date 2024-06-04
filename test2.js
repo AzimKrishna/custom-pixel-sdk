@@ -93,7 +93,7 @@
       referrer: document.referrer,
       timestamp: new Date().toISOString()
     };
-    
+
     if (mpq.debug) {
       console.log('Event tracked:', payload);
     }
@@ -108,6 +108,9 @@
       xhr.open('POST', mpq.endpoint, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify(payload));
+      if (mpq.debug) {
+        console.log('Data sent:', payload);
+      }
     } catch (error) {
       console.error('Error sending pixel data:', error);
     }
