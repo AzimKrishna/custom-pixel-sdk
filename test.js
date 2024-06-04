@@ -6,9 +6,7 @@
   function processQueue() {
     while (mpq.length) {
       var args = mpq.shift();
-      if (typeof args[0] === 'function') {
-        args[0].apply(null, args.slice(1));
-      }
+      mpq.callMethod.apply(mpq, args);
     }
   }
 
@@ -37,11 +35,11 @@
 
     // Subscribe to Shopify analytics events
     analytics.subscribe('page_viewed', function(event) {
-      mpq.track('PageView', { pageEventId: event.id, timeStamp: event.timestamp });
+      mpq.callMethod('track', 'PageView', { pageEventId: event.id, timeStamp: event.timestamp });
     });
 
     analytics.subscribe('product_viewed', function(event) {
-      mpq.track('ViewContent', {
+      mpq.callMethod('track', 'ViewContent', {
         content_ids: [event.data?.productVariant?.id],
         content_name: event.data?.productVariant?.title,
         currency: event.data?.productVariant?.price.currencyCode,
@@ -50,11 +48,11 @@
     });
 
     analytics.subscribe('search_submitted', function(event) {
-      mpq.track('Search', { search_string: event.searchResult.query });
+      mpq.callMethod('track', 'Search', { search_string: event.searchResult.query });
     });
 
     analytics.subscribe('product_added_to_cart', function(event) {
-      mpq.track('AddToCart', {
+      mpq.callMethod('track', 'AddToCart', {
         content_ids: [event.data?.cartLine?.merchandise?.productVariant?.id],
         content_name: event.data?.cartLine?.merchandise?.productVariant?.title,
         currency: event.data?.cartLine?.merchandise?.productVariant?.price.currencyCode,
@@ -63,15 +61,15 @@
     });
 
     analytics.subscribe('payment_info_submitted', function(event) {
-      mpq.track('AddPaymentInfo', {});
+      mpq.callMethod('track', 'AddPaymentInfo', {});
     });
 
     analytics.subscribe('checkout_started', function(event) {
-      mpq.track('InitiateCheckout', {});
+      mpq.callMethod('track', 'InitiateCheckout', {});
     });
 
     analytics.subscribe('checkout_completed', function(event) {
-      mpq.track('Purchase', {
+      mpq.callMethod('track', 'Purchase', {
         currency: event.data?.checkout?.currencyCode,
         value: event.data?.checkout?.totalPrice?.amount,
       });
